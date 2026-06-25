@@ -65,9 +65,10 @@ Options:
 -m, --method   'email' (default) or 'message' which uses the Message API
 -n, --number   The number of times to send this message
 -v, --verbose  Verbose outupt
+
 Example:
-\$php email.php -s='Test subject'
-\$php email.php -s=Test -t=to@example.com -f=from@moodle.com
+    php email.php -s='Test subject'
+    php email.php -s=Test -t=to@example.com -f=from@moodle.com
 ";
 
     echo $help;
@@ -87,7 +88,7 @@ $to = (object)array(
     'maildisplay' => true,
     'mailformat' => 1, // 1 = html, 0 = text only
 );
-$allnames = get_all_user_name_fields();
+$allnames = \core_user\fields::get_name_fields();
 foreach ($allnames as $name) {
     if (!property_exists($to, $name)) {
         $to->$name = '';
@@ -133,7 +134,7 @@ if ($options['dryrun']) {
 
             case 'message':
 
-                $eventdata = new \stdClass();
+                $eventdata = new \core\message\message();
                 $eventdata->component           = 'tool_email';
                 $eventdata->name                = 'email';
                 $eventdata->userfrom            = $from;

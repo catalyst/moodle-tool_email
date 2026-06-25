@@ -24,9 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016011501;
-$plugin->release   = 2015033001; // Match release exactly to version.
-$plugin->requires  = 2014050800;
+$plugin->version   = 2026062501;
+$plugin->release   = 2026062501; // Match release exactly to version.
+$plugin->requires  = 2024100700;
 $plugin->component = 'tool_email';
 $plugin->maturity  = MATURITY_STABLE;
 
