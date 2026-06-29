@@ -59,7 +59,9 @@ if ($options['help'] || empty($options['subject'])) {
 Options:
 -h, --help     Print out this help
 -d, --dryrun   Dry run with echo instead of sending email
--t, --to       To   email address (defaults to {$options['to']})
+-t, --to       To email address (defaults to {$options['to']}). If this
+               matches a real user's email address, that user's record is
+               used as the recipient.
 -f, --from     From email address (defaults to {$options['from']})
 -s, --subject  Subject is required
 -m, --method   'email' (default) or 'message' which uses the Message API
@@ -75,23 +77,28 @@ Example:
     exit(0);
 }
 
-$to = (object)array(
-    'id' => 1,
-    'auth' => 'manual',
-    'email' => $options['to'],
-    'username' => 'brendan',
-    'firstname' => 'Bob',
-    'lastname' => 'Smith',
-    'deleted' => 0,
-    'emailstop' => 0,
-    'suspended' => 0,
-    'maildisplay' => true,
-    'mailformat' => 1, // 1 = html, 0 = text only
-);
-$allnames = \core_user\fields::get_name_fields();
-foreach ($allnames as $name) {
-    if (!property_exists($to, $name)) {
-        $to->$name = '';
+// Get the user record from the target email address.
+$to = $DB->get_record('user', ['email' => $options['to'], 'deleted' => 0], '*', IGNORE_MULTIPLE);
+// If the user record doesn't exist, fallback to creating a fake user.
+if (!$to) {
+    $to = (object)array(
+        'id' => 0,
+        'auth' => 'manual',
+        'email' => $options['to'],
+        'username' => 'brendan',
+        'firstname' => 'Bob',
+        'lastname' => 'Smith',
+        'deleted' => 0,
+        'emailstop' => 0,
+        'suspended' => 0,
+        'maildisplay' => true,
+        'mailformat' => 1, // 1 = html, 0 = text only
+    );
+    $allnames = \core_user\fields::get_name_fields();
+    foreach ($allnames as $name) {
+        if (!property_exists($to, $name)) {
+            $to->$name = '';
+        }
     }
 }
 
@@ -117,7 +124,7 @@ $preopt
 $text = html_to_text($html);
 
 if ($options['dryrun']) {
-    echo "Dry run: email from {$options['from']} to {$options['to']}\n";
+    echo "Dry run: email from {$options['from']} to {$to->email}\n";
 } else {
 
     for ($i = 0; $i < $options['number']; $i++) {
@@ -128,7 +135,7 @@ if ($options['dryrun']) {
                 email_to_user($to, $from, $subject, $text, $html);
 
                 if ($options['verbose']) {
-                    print "email_to_user(from: {$options['from']}, to:{$options['to']}, subject, body);\n";
+                    print "email_to_user(from: {$options['from']}, to:{$to->email}, subject, body);\n";
                 }
                 break;
 
