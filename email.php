@@ -139,7 +139,7 @@ if ($options['dryrun']) {
                 $eventdata->name                = 'email';
                 $eventdata->userfrom            = $from;
                 $eventdata->userto              = $to;
-                $eventdata->subject             = $subject;
+                $eventdata->subject             = $subject . ' via message api';
                 $eventdata->fullmessage         = $text;
                 $eventdata->fullmessageformat   = FORMAT_HTML;
                 $eventdata->fullmessagehtml     = $html;
