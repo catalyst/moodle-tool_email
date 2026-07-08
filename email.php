@@ -48,7 +48,7 @@ list($options, $unrecognized) = cli_get_params(array(
 ));
 
 if ($unrecognized) {
-    $unrecognized = implode("\n  ", $unrecognized);
+    $unrecognized = implode(PHP_EOL . "  ", $unrecognized);
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized), 2);
 }
 
@@ -124,23 +124,19 @@ $preopt
 $text = html_to_text($html);
 
 if ($options['dryrun']) {
-    echo "Dry run: email from {$options['from']} to {$to->email}\n";
+    echo "Dry run: email from {$options['from']} to {$to->email}" . PHP_EOL;
 } else {
-
     for ($i = 0; $i < $options['number']; $i++) {
-
         switch ($options['method']) {
-
             case 'email':
                 email_to_user($to, $from, $subject, $text, $html);
 
                 if ($options['verbose']) {
-                    print "email_to_user(from: {$options['from']}, to:{$to->email}, subject, body);\n";
+                    print "email_to_user(from: {$options['from']}, to:{$to->email}, subject, body);" . PHP_EOL;
                 }
                 break;
 
             case 'message':
-
                 $eventdata = new \core\message\message();
                 $eventdata->component           = 'tool_email';
                 $eventdata->name                = 'email';
@@ -155,20 +151,18 @@ if ($options['dryrun']) {
 
                 if (message_send($eventdata)) {
                     if ($options['verbose']) {
-                        print "---> Success notification sent to {$to->email}.";
+                        print "---> Success notification sent to {$to->email}." . PHP_EOL;
                     }
                 } else {
                     if ($options['verbose']) {
-                        print "---> Unable to send notification.";
+                        print "---> Unable to send notification." . PHP_EOL;
                     }
                 }
                 break;
 
             default:
-                print "Unkown method {$options['method']}\n";
+                print "Unkown method {$options['method']}" . PHP_EOL;
         }
-
     }
-
 }
 
